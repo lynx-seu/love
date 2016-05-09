@@ -1,9 +1,6 @@
-local GS = require "hump.gamestate"
-local scenedir = "scene"
+local app = require "app.app"
 
 function love.load()
-    GS.registerEvents()
-    local start = require(scenedir .. "." .. "start")
-    GS.switch(start)
+    app.run()
 end
 
