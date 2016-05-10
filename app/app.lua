@@ -11,7 +11,8 @@ end
 
 function app.show(scene, ...)
     local to = require(config.scenedir .. scene)
-    gs.switch(to, ...)
+    if to.ctor then to:ctor(...) end
+    gs.switch(to)
 end
 
 return app
