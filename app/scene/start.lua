@@ -1,15 +1,20 @@
-local start = {}
+
+local suit = require "Suit"
+local class = require "loki.class"
+
+local start = class()
 
 function start:ctor()
-    self.img = love.graphics.newImage("assets/bg.jpg")
-    self.w, self.h = self.img:getDimensions()
+end
+
+function start:update(dt)
+    if suit.Button("Hello, World!", 100,100, 300,30).hit then
+        self:show("main")
+    end
 end
 
 function start:draw()
-    local w, h = love.graphics.getDimensions()
-    local sx = w / self.w
-    local sy = h / self.h
-    love.graphics.draw(self.img, w/2, h/2, 0, sx, sy, self.w/2, self.h/2)
+    suit.draw()
 end
 
 function start:keyreleased(key, code)
@@ -17,3 +22,4 @@ function start:keyreleased(key, code)
 end
 
 return start
+
