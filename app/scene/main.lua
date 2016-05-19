@@ -6,6 +6,7 @@ local main = class()
 
 function main:ctor()
     self.lb = ttflabel("test", 33)
+    self.lb:setcolor(255, 0, 0)
     self.lb:sr(2, 1)
 end
 

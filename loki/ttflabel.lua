@@ -8,8 +8,8 @@ local ttflabel = class(sprite)
 function ttflabel:ctor(text, size, filename)
     local font = love.graphics.newFont(size)
     local text = love.graphics.newText(font, text)
-    self.w, self.h = text:getDimensions()
-    self.drawable = text
+    self:setsize(text:getDimensions())
+    self:setdrawable(text)
 end
 
 return ttflabel
