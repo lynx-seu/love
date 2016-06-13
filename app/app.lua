@@ -4,27 +4,16 @@ local app = {}
 local gs        = require "hump.gamestate"
 local config    = require (BASE .. "config")
 
-local all_callbacks = {"show"}
-local function registerFunc(class)
-    for i=1, #all_callbacks do
-        local ss = all_callbacks[i]
-        if not class[ss] then
-            class[ss] = function (class, ...)
-                return app[ss](...)
-            end
-        end
-    end
-end
-
 function app.run(...)
     gs.registerEvents()
-    app.show(config.start, ...)
+    local start = config.start or "start"
+    app.show(start, ...)
 end
 
 function app.show(scene, ...)
-    local to = require(config.scenedir .. scene)
-    registerFunc(to)
-    gs.switch(to())
+    local scenedir = config.scenedir or "scene" 
+    local to_class = require(BASE .. scenedir .. scene)
+    gs.switch(to_class(...))
 end
 
 return app

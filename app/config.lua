@@ -1,4 +1,7 @@
 return {
-    scenedir = "app.scene.",
+    scenedir = "scene.",
     start    = "start",
+
+    rw = 800,
+    rh = 1280,
 }
