@@ -8,8 +8,8 @@ function love.conf(t)
  
     t.window.title = "Untitled"         -- The window title (string)
     t.window.icon = nil                 -- Filepath to an image to use as the window's icon (string)
-    t.window.width = 480                -- The window width (number)
-    t.window.height = 800               -- The window height (number)
+    t.window.width = 800                -- The window width (number)
+    t.window.height = 480               -- The window height (number)
     t.window.borderless = false         -- Remove all border visuals from the window (boolean)
     t.window.resizable = false          -- Let the window be user-resizable (boolean)
     t.window.minwidth = 1               -- Minimum window width if the window is resizable (number)
@@ -40,3 +40,37 @@ function love.conf(t)
     t.modules.window = true             -- Enable the window module (boolean)
     t.modules.thread = true             -- Enable the thread module (boolean)
 end
+
+-- enum
+local scenedir = "scene"
+local start    = "start"
+
+local landscape = false
+local rw, rh = 800, 1280
+-- resource size
+local lg = love.graphics
+local w, h = lg.getDimensions()
+
+if w > h then
+    landscape = true
+    rw, rh = rh, rw
+end
+local sx, sy = w/rw, h/rh
+local s = sx >= sy and sx or sy
+
+-- game resource
+local GAME_RES = {
+    "main1",
+}
+
+
+return {
+    scenedir = scenedir,
+    start    = start,
+
+    rw = rw, rh = rh,
+    sx = sx, sy = sy,
+    s = s,
+
+    gameres = GAME_RES
+}
