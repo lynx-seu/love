@@ -40,37 +40,3 @@ function love.conf(t)
     t.modules.window = true             -- Enable the window module (boolean)
     t.modules.thread = true             -- Enable the thread module (boolean)
 end
-
--- enum
-local scenedir = "scene"
-local start    = "start"
-
-local landscape = false
-local rw, rh = 800, 1280
--- resource size
-local lg = love.graphics
-local w, h = lg.getDimensions()
-
-if w > h then
-    landscape = true
-    rw, rh = rh, rw
-end
-local sx, sy = w/rw, h/rh
-local s = sx >= sy and sx or sy
-
--- game resource
-local GAME_RES = {
-    "main1",
-}
-
-
-return {
-    scenedir = scenedir,
-    start    = start,
-
-    rw = rw, rh = rh,
-    sx = sx, sy = sy,
-    s = s,
-
-    gameres = GAME_RES
-}
