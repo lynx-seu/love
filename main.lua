@@ -1,33 +1,12 @@
-local BASE = (...):match('(.-)[^%.]+$')
-
-local gs        = require "hump.gamestate"
-local config    = require "globaldef"
-
-local lg = love.graphics
-
--- app instance
-local app = {}
-
-function app.run(...)
-    gs.registerEvents()
-    local start = config._start or "start"
-    app.show(start, ...)
-end
-
-function app.show(scene, ...)
-    local scenedir = config._scenedir or "scene" 
-    local to_class = require(BASE .. scenedir.."." .. scene)
-    gs.switch(to_class(...))
-end
+local xx = require "xx"
+local app, env = xx.app, xx.env
 
 -- love module
 function love.load()
-    app.run()
+    env.setResolutionSize(800, 1280)
+    print(env.getScale())
+
+    app.setSceneDir("scene")
+    app.run("test")
 end
 
-function love.draw()
-    lg.scale(config._sx, config._sy)
-end
-
-
-return app
