@@ -1,54 +1,68 @@
+local BASE = (...):match('(.-)[^%.]+$')
+local log = require(BASE .. 'log')
+
 local lg = love.graphics
 
 local pack_pool = {}
 local quad_pool = {}
 
-local spritepack = {}
-
-function spritepack.import(name)
-    assert(not pack_pool[name], string.format("pack [%s] is exist",  name))
-
-    if love.filesystem.exists(name ..'.png') then
-        local img  = lg.newImage(name ..'.png')
-        local imgw, imgh = img:getDimensions()
-        local data = require(name).getSpriteSheetData().frames
-        for i=1, #data do
+local function parse_iter(plist)
+    local data = require(plist).getSpriteSheetData().frames
+    local i, n = 0, #data
+    return  function()
+        i = i + 1
+        if i <= n then
             local frame = data[i]
-            local n1 = frame.name
+            local name = frame.name
             local rect = frame.textureRect
-
-            --rect convert
-            --rect.y = imgh - rect.y - rect.height
-
-            local quad = lg.newQuad(rect.x, rect.y, rect.width, rect.height, imgw, imgh)
-            assert(not quad_pool[n1], string.format("sprite [%s] is exist", n1))
-            quad_pool[n1] = {img = img, rect=rect, quad=quad}
+            return name, rect
         end
-
-        pack_pool[name] = img
     end
 end
 
-function spritepack.remove(name)
-    assert(pack_pool[name], string.format("pack [%s] not import", name))
+local spritepack = {}
 
-    local data = require(name).getSpriteSheetData().frames
-    for i=1, #data do
-        local n1 = data[i].name
-        quad_pool[n1] = nil
+function spritepack.import(plist)
+    if pack_pool[plist] then
+        return log.warn(string.format("pack [%s] is exist",  plist))
     end
 
-    pack_pool[name] = nil
+    if love.filesystem.exists(plist ..'.png') then
+        local img  = lg.newImage(plist ..'.png')
+        local imgw, imgh = img:getDimensions()
+
+        for name, rect in parse_iter(plist) do
+            local x,y,w,h = rect.x, rect.y, rect.width, rect.height
+            local quad = lg.newQuad(x,y,w,h, imgw, imgh)
+            if quad_pool[name] then log.warn(string.format("sprite [%s] is exist", name)) end
+            quad_pool[name] = {plist=plist, quad=quad}
+        end
+
+        pack_pool[plist] = img
+    else
+        log.error(string.format("[%s.png] is not exist", plist))
+    end
+end
+
+function spritepack.remove(plist)
+    if not pack_pool[plist] then return end
+
+    for n in parse_iter(plist) do
+        quad_pool[n] = nil
+    end
+
+    pack_pool[plist] = nil
 end
 
 function spritepack.draw(sprite, ...)
-    assert(quad_pool[sprite], string.format("sprite [%s] is not exist", sprite))
-    local img  = quad_pool[sprite].img
-    local quad = quad_pool[sprite].quad
-    local rect = quad_pool[sprite].rect
+    if not quad_pool[sprite] then
+        return  log.error(string.format("sprite [%s] is not exist", sprite))
+    end
+    local plist = quad_pool[sprite].plist
+    local img   = pack_pool[plist]
+    local quad  = quad_pool[sprite].quad
 
     lg.draw(img, quad, ...)
-    return rect.width, rect.height
 end
 
 return spritepack
